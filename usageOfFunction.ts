@@ -66,4 +66,22 @@ const addWithParams: OverloadingAddWithParams = (a, b, c?: number) => {
   return a + b;
 };
 
-// ⭐️ polymophism(다형성)에 대해서 알아봅시다.
+// ⭐️ polymorphism(다형성)에 대해서 알아봅시다.
+// poly + morph = many structure
+// typescript에서 함수는 string이나 object를 첫번째 parameter로 가질 수 있습니다.
+// Number | Boolean | String 배열을 받아서 배열의 요소를 차례대로 출력하는 함수를 만들어보겠습니다.
+type SuperPrint = {
+  (arr: number[]): void;
+  (arr: boolean[]): void;
+  (arr: string[]): void;
+};
+
+const superPrint: SuperPrint = (arr) => {
+  arr.forEach((i) => console.log(i));
+};
+
+// number, boolean, string, void, unknown ... 은 concrete type입니다.
+// generic은 타입의 placeholder와 같습니다. call signature를 작성할 때, 들어올 확실한 타입(concrete type)을 모를 때 generic을 사용합니다.
+type SuperPrintWithGeneric = {
+  <TypePlaceholder>(add: TypePlaceholder[]): void;
+};
