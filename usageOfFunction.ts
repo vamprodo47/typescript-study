@@ -81,7 +81,78 @@ const superPrint: SuperPrint = (arr) => {
 };
 
 // number, boolean, string, void, unknown ... 은 concrete type입니다.
-// generic은 타입의 placeholder와 같습니다. call signature를 작성할 때, 들어올 확실한 타입(concrete type)을 모를 때 generic을 사용합니다.
+// 1. generic은 타입의 placeholder와 같습니다. call signature를 작성할 때, 들어올 확실한 타입(concrete type)을 모를 때 generic을 사용합니다.
 type SuperPrintWithGeneric = {
   <TypePlaceholder>(add: TypePlaceholder[]): void;
 };
+// any는 더 이상 우리를 보호해주지 않기 때문에, generic과는 다릅니다.
+// generic은 우리가 요구한 대로 signature를 생성해줄 수 있는 도구입니다.
+// 2. 아래는 사용 예시입니다.
+const superPrintWithGeneric: SuperPrintWithGeneric = (a) => a[0];
+const a = superPrintWithGeneric([1, 2, 3, 4]);
+const b = superPrintWithGeneric([true, true, false]);
+const c = superPrintWithGeneric(["a", "b", "c"]);
+const d = superPrintWithGeneric([1, 2, true, "a"]);
+
+// 3. 여러 개의 arguments를 사용하는 방법입니다.
+type SuperPrintWithArguments = {
+  <T, M>(a: T[], b: M): T;
+};
+
+const superPrintWithArguments: SuperPrintWithArguments = (a) => a[0];
+const e = superPrintWithArguments([1, 2, 3, 4], "e");
+
+// 4. generic을 사용하는 다른 방법입니다.
+function superPrintDifferent<T>(a: T[]) {
+  return a[0];
+}
+
+// 5. generic을 사용하는 다른 방법입니다.
+type Player<E> = {
+  name: string;
+  extraInfo: E;
+};
+
+const player: Player<{ favoriteFood: string }> = {
+  name: "John",
+  extraInfo: {
+    favoriteFood: "kimchi",
+  },
+};
+
+// 6. 5번을 수정하면 다음과 같습니다.
+type JohnPlayer = Player<{ favoriteFood: string }>;
+
+const secondPlayer: JohnPlayer = {
+  name: "John",
+  extraInfo: {
+    favoriteFood: "kimchi",
+  },
+};
+
+// 7. 5번을 수정하는 다른 방법입니다.
+type JohnExtra = {
+  favoriteFood: string;
+};
+
+type modifiedJohnPlayer = Player<JohnExtra>;
+
+const thirdPlayer: modifiedJohnPlayer = {
+  name: "John",
+  extraInfo: {
+    favoriteFood: "kimchi",
+  },
+};
+
+//5~7번을 참고해보면, 달라질 수 있는 타입에 대해서 generic을 사용하면 된다는 것을 알 수 있습니다.
+
+// 8. Array에 generic이 사용되는 경우를 알아봅시다.
+type G = Array<number>;
+const g: G = [1, 2, 3, 4];
+
+function printAllNumbers(arr: number[]) {}
+function printAllNumbersWithGeneric(arr: Array<number>) {}
+
+// 9. ReactJS의 useState 함수에서는 다음과 같이 사용됩니다.
+// useState<number>();
+// generic을 보내면, useState의 call signature가 number 타입의 useState가 되는 것입니다.
